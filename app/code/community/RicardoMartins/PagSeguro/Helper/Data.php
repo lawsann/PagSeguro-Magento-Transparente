@@ -441,7 +441,8 @@ class RicardoMartins_PagSeguro_Helper_Data extends Mage_Core_Helper_Abstract
                 Mage::getStoreConfigFlag(self::XML_PATH_PAYMENT_PAGSEGURO_CC_FORCE_INSTALLMENTS),
             'installment_limit' => (int)Mage::getStoreConfig(self::XML_PATH_PAYMENT_PAGSEGURO_CC_INSTALLMENT_LIMIT),
             'placeorder_button' => Mage::getStoreConfig(self::XML_PATH_PAYMENT_PAGSEGURO_PLACEORDER_BUTTON),
-            'loader_url' => Mage::getDesign()->getSkinUrl('pagseguro/ajax-loader.gif', array('_secure'=>true))
+            'loader_url' => Mage::getDesign()->getSkinUrl('pagseguro/ajax-loader.gif', array('_secure'=>true)),
+            'is_multicc_enabled' => $this->isMultiCcEnabled(),
         );
         return json_encode($config);
     }

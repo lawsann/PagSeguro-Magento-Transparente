@@ -25,18 +25,18 @@ $multiCcEnabled = Mage::helper('ricardomartins_pagseguro')->isMultiCcEnabled();
         </div>
     </li>
 */ ?>
-    <?php if ($multiCcEnabled):?>
-    <li>
-        <label for="multicc"><?php echo __('Pay with 2 cards')?></label>
-        <div class="input-box" id="multicc" name="multicc">
+    <?php if ($multiCcEnabled): ?>
+    <li class="multi-cc-switch">
+        <label for="<?php echo $_code ?>_multicc"><?php echo __('Pay with 2 cards')?></label>
+        <div class="input-box">
             <label class="switch">
-                <input type="checkbox">
+                <input type="checkbox" id="rm_pagseguro_cc_multicc" name="payment[multicc_enabled]">
                 <span class="slider round"></span>
             </label>
         </div>
     </li>
     <?php endif; ?>
-    <li>
+    <li data-role="card-form-field" data-cc-form-idx="1">
         <label for="<?php echo $_code ?>_cc_number" class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label>
         <div class="input-box">
             <input type="text" id="<?php echo $_code ?>_cc_number" name="payment[ps_cc_number]" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number validate-cc-type required-entry validate-pagseguro" value="" maxlength="16"/>
@@ -45,7 +45,7 @@ $multiCcEnabled = Mage::helper('ricardomartins_pagseguro')->isMultiCcEnabled();
             <span id="card-msg" style="color: red;clear:left; display: block;"></span>
         </div>
     </li>
-    <li id="<?php echo $_code ?>_cc_type_exp_div">
+    <li data-role="card-form-field" data-cc-form-idx="1" id="<?php echo $_code ?>_cc_type_exp_div">
         <label for="<?php echo $_code ?>_expiration" class="required"><em>*</em><?php echo $this->__('Expiry Date') ?></label>
         <div class="input-box">
             <div class="v-fix">
@@ -66,7 +66,7 @@ $multiCcEnabled = Mage::helper('ricardomartins_pagseguro')->isMultiCcEnabled();
             </div>
         </div>
     </li>
-    <li id="<?php echo $_code ?>_cc_type_cvv_div">
+    <li data-role="card-form-field" data-cc-form-idx="1" id="<?php echo $_code ?>_cc_type_cvv_div">
         <label for="<?php echo $_code ?>_cc_cid" class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label>
         <div class="input-box">
             <div class="v-fix">
@@ -75,27 +75,103 @@ $multiCcEnabled = Mage::helper('ricardomartins_pagseguro')->isMultiCcEnabled();
             <a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
         </div>
     </li>
-    <li>
+    <li class="multi-cc-form-field" data-role="card-form-field" data-cc-form-idx="1">
         <label for="<?php echo $_code ?>_cc_owner" class="required"><em>*</em><?php echo $this->__('Credit Card Owner\'s Name') ?></label>
         <div class="input-box">
             <input type="text" id="<?php echo $_code ?>_cc_owner" name="payment[ps_cc_owner]" title="<?php echo $this->__('Credit Card Owner\'s Name') ?>" class="input-text required-entry" value=""/>
         </div>
     </li>
     <?php if($this->isDobVisible()):?>
-        <li id="<?php echo $_code ?>_cc_dob_div">
+        <li data-role="card-form-field" data-cc-form-idx="1" id="<?php echo $_code ?>_cc_dob_div">
             <?php $_dob = $this->getLayout()->createBlock('ricardomartins_pagseguro/form_cc_dob') ?>
             <?php echo $_dob->toHtml() ?>
         </li>
     <?php endif ?>
     <?php if(Mage::helper('ricardomartins_pagseguro')->isCpfVisible()):?>
-        <li id="<?php echo $_code ?>_cpf_div">
+        <li data-role="card-form-field" data-cc-form-idx="1" id="<?php echo $_code ?>_cpf_div">
             <label for="<?php echo $_code ?>_cpf" class="required"><em>*</em><?php echo $this->__('Credit Card Owner\'s CPF') ?></label>
             <div class="input-box">
                 <input type="text" id="<?php echo $_code ?>_cpf" name="payment[<?php echo $_code?>_cpf]" title="<?php echo $this->__('Credit Card Owner\'s CPF') ?>" class="input-text required-entry validate-digits" value="" maxlength="11"/>
             </div>
         </li>
     <?php endif ?>
-    <li id="<?php echo $_code ?>_cc_installments_div">
+
+    <?php if ($multiCcEnabled): ?>
+    <li data-role="card-form-field" data-cc-form-idx="2" class="multi-cc-form-field" style="display: none;">
+        <div class="cc1-summary">
+            <div class="info" id="<?php echo $_code ?>_cc1_summary_info">
+                <span><strong><?php echo $this->__("card 01") ?></strong> | {{cc1_number}}</span>
+                <span>R${{cc1_total}} {{cc1_installments_number}}x <?php echo $this->__("of") ?> R${{cc1_installments_value}} {{cc1_installments_complement}}</span>
+            </div>
+            <span class="edit-link" href="#"><?php echo $this->__('edit') ?></span>
+        </div>
+    </li>
+
+    <!-- second credit card form -->
+    <li data-role="card-form-field" data-cc-form-idx="2" style="display: none;">
+        <label for="<?php echo $_code ?>_cc2_number" class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label>
+        <div class="input-box">
+            <input type="text" id="<?php echo $_code ?>_cc2_number" name="payment[ps_cc2_number]" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number validate-cc-type required-entry validate-pagseguro" value="" maxlength="16"/>
+            <?php #nao remover os campos abaixo ?>
+            <span id="card2-brand" style="text-transform: capitalize; display: block;"></span>
+            <span id="card2-msg" style="color: red;clear:left; display: block;"></span>
+        </div>
+    </li>
+    <li data-role="card-form-field" data-cc-form-idx="2" id="<?php echo $_code ?>_cc2_type_exp_div" style="display: none;">
+        <label for="<?php echo $_code ?>_cc2_expiration" class="required"><em>*</em><?php echo $this->__('Expiry Date') ?></label>
+        <div class="input-box">
+            <div class="v-fix">
+                <select id="<?php echo $_code ?>_cc2_expiration" name="payment[ps_cc2_exp_month]" class="month validate-cc-exp required-entry">
+                    <?php $_ccExpMonth = $this->getInfoData('ps_cc2_exp_month') ?>
+                    <?php foreach ($this->getCcMonths() as $k=>$v): ?>
+                        <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_ccExpMonth): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                    <?php endforeach ?>
+                </select>
+            </div>
+            <div class="v-fix">
+                <?php $_ccExpYear = $this->getInfoData('ps_cc2_exp_year') ?>
+                <select id="<?php echo $_code ?>_cc2_expiration_yr" name="payment[ps_cc2_exp_year]" class="year required-entry">
+                    <?php foreach ($this->getCcYears() as $k=>$v): ?>
+                        <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_ccExpYear): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                    <?php endforeach ?>
+                </select>
+            </div>
+        </div>
+    </li>
+    <li data-role="card-form-field" data-cc-form-idx="2" id="<?php echo $_code ?>_cc2_type_cvv_div" style="display: none;">
+        <label for="<?php echo $_code ?>_cc2_cid" class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label>
+        <div class="input-box">
+            <div class="v-fix">
+                <input type="text" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry validate-cc-cvn validate-pagseguro" id="<?php echo $_code ?>_cc2_cid" name="payment[ps_cc2_cid]" value="" maxlength="4"/>
+            </div>
+            <a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
+        </div>
+    </li>
+    <li data-role="card-form-field" data-cc-form-idx="2" style="display: none;">
+        <label for="<?php echo $_code ?>_cc2_total_value" class="required"><em>*</em><?php echo $this->__('Value that will be paid with this card') ?></label>
+        <div class="input-box">
+            <input type="text" id="<?php echo $_code ?>_cc2_total_value" name="payment[cc2_total_value]" title="<?php echo $this->__('Value that will be paid with this card') ?>" class="input-text" value="" placeholder="R$ 0,00" readonly="readonly" />
+        </div>
+    </li>
+
+    <!-- cc1 total value -->
+    <li class="multi-cc-form-field total-value cc-1" data-role="multi-cc-form-field" style="display: none;">
+        <label for="<?php echo $_code ?>_cc_total_value" class="required"><em>*</em><?php echo $this->__('Value that will be paid with this card') ?></label>
+        <div class="input-box">
+            <input type="text" id="<?php echo $_code ?>_cc_total_value" name="payment[cc_total_value]" title="<?php echo $this->__('Value that will be paid with this card') ?>" class="input-text" value="" placeholder="R$ 0,00" />
+        </div>
+    </li>
+
+    <!-- progressbar -->
+    <li class="multi-cc-form-field" data-role="multi-cc-form-field" style="display: none;">
+        <div class="cc-value-progress-bar" id="<?php echo $_code ?>_multi_cc_progress_bar">
+            <label><?php echo $this->__('Remaining value of the payment: %s') ?></label>
+            <span class="progress" data-role="progress"></span>
+        </div>
+    </li>
+    <?php endif ?>
+
+    <li data-role="card-form-field" data-cc-form-idx="1" id="<?php echo $_code ?>_cc_installments_div">
         <label for="<?php echo $_code ?>_cc_installments" class="required"><em>*</em><?php echo $this->__('Installments') ?></label>
         <div class="input-box">
             <div class="v-fix">
@@ -106,6 +182,11 @@ $multiCcEnabled = Mage::helper('ricardomartins_pagseguro')->isMultiCcEnabled();
             </div>
         </div>
     </li>
+    <?php if ($multiCcEnabled): ?>
+    <li data-role="multi-cc-form-field" class="multi-cc-form-field action-line cc-1" style="display: none;">
+        <button type="button" class="button add-second-card" id="<?php echo $_code ?>_add_second_cc_button"><?php echo $this->__('Add a second card') ?></button>
+    </li>
+    <?php endif;?>
     <?php echo $this->getChildHtml() ?>
     <li>
         <?php /* O selo do PagSeguro deve ser exibido obrigatoriamente. Você pode escolher outra imagem disponivel na pasta 'selo' */ ?>
